@@ -1,0 +1,54 @@
+{
+    "name": "rightclick-git",
+    "displayName": "Rightclick Git",
+    "description": "Rightclick files in the directory tree to fiddle with them",
+    "version": "1.0.0",
+    "publisher": "Everspace",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Everspace/vsc-rightclick-git.git"
+    },
+    "engines": {
+        "vscode": "^1.18.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "keywords": [
+        "Git",
+        "Menu",
+        "Context",
+        "Rightclick"
+    ],
+    "contributes": {
+        "menus": {
+            "explorer/context": [
+                {
+                    "command": "git.stage",
+                    "group": "Git@1",
+                    "when": "config.git.enabled && gitOpenRepositoryCount != 0"
+                },
+                {
+                    "command": "git.unstage",
+                    "group": "Git@2",
+                    "when": "config.git.enabled && gitOpenRepositoryCount != 0"
+                },
+                {
+                    "command": "git.clean",
+                    "group": "Git@3",
+                    "when": "config.git.enabled && gitOpenRepositoryCount != 0"
+                },
+                {
+                    "command": "git.ignore",
+                    "group": "Git@4",
+                    "when": "config.git.enabled && gitOpenRepositoryCount != 0"
+                },
+                {
+                    "command": "git.commitStaged",
+                    "group": "Git@5",
+                    "when": "config.git.enabled && gitOpenRepositoryCount != 0"
+                }
+            ]
+        }
+    }
+}
