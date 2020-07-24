@@ -1,54 +1,94 @@
 {
-    "name": "rightclick-git",
-    "displayName": "Rightclick Git",
-    "description": "Rightclick files in the directory tree to fiddle with them",
-    "version": "1.0.0",
-    "publisher": "Everspace",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/Everspace/vsc-rightclick-git.git"
-    },
-    "engines": {
-        "vscode": "^1.18.0"
-    },
-    "categories": [
-        "Other"
-    ],
-    "keywords": [
-        "Git",
-        "Menu",
-        "Context",
-        "Rightclick"
-    ],
-    "contributes": {
-        "menus": {
-            "explorer/context": [
-                {
-                    "command": "git.stage",
-                    "group": "Git@1",
-                    "when": "config.git.enabled && gitOpenRepositoryCount != 0"
-                },
-                {
-                    "command": "git.unstage",
-                    "group": "Git@2",
-                    "when": "config.git.enabled && gitOpenRepositoryCount != 0"
-                },
-                {
-                    "command": "git.clean",
-                    "group": "Git@3",
-                    "when": "config.git.enabled && gitOpenRepositoryCount != 0"
-                },
-                {
-                    "command": "git.ignore",
-                    "group": "Git@4",
-                    "when": "config.git.enabled && gitOpenRepositoryCount != 0"
-                },
-                {
-                    "command": "git.commitStaged",
-                    "group": "Git@5",
-                    "when": "config.git.enabled && gitOpenRepositoryCount != 0"
-                }
-            ]
-        }
-    }
+	"name": "rightclick-git",
+	"displayName": "Rightclick Git",
+	"description": "Rightclick files in the directory tree to fiddle with them",
+	"version": "2.0.0-preview",
+	"publisher": "Everspace",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Everspace/vsc-rightclick-git.git"
+	},
+	"engines": {
+		"vscode": "^1.37.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"keywords": [
+		"Git",
+		"Menu",
+		"Context",
+		"Rightclick"
+	],
+	"activationEvents": [
+		"workspaceContains:\\.gitignore",
+		"workspaceContains:\\.git/**"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "rightclick-git.stageChanges",
+				"category": "Rightclick Git",
+				"title": "Stage changes",
+				"group": "Git@1",
+				"when": "config.git.enabled && gitOpenRepositoryCount != 0"
+			},
+			{
+				"command": "whatever.helloWorld",
+				"title": "Hello World"
+			}
+		],
+		"menus": {
+			"explorer/context": [
+				{
+					"command": "rightclick-git.stageChanges",
+					"group": "Git@1",
+					"when": "config.git.enabled && gitOpenRepositoryCount != 0"
+				},
+				{
+					"command": "git.unstage",
+					"group": "Git@2",
+					"when": "config.git.enabled && gitOpenRepositoryCount != 0"
+				},
+				{
+					"command": "git.clean",
+					"group": "Git@3",
+					"when": "config.git.enabled && gitOpenRepositoryCount != 0"
+				},
+				{
+					"command": "git.ignore",
+					"group": "Git@4",
+					"when": "config.git.enabled && gitOpenRepositoryCount != 0"
+				},
+				{
+					"command": "git.commitStaged",
+					"group": "Git@5",
+					"when": "config.git.enabled && gitOpenRepositoryCount != 0"
+				}
+			]
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "yarn run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint src --ext ts",
+		"watch": "tsc -watch -p ./",
+		"pretest": "yarn run compile && yarn run lint",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.1",
+		"@types/mocha": "^7.0.2",
+		"@types/node": "^13.11.0",
+		"@types/vscode": "^1.47.0",
+		"@typescript-eslint/eslint-plugin": "^2.30.0",
+		"@typescript-eslint/parser": "^2.30.0",
+		"eslint": "^6.8.0",
+		"glob": "^7.1.6",
+		"mocha": "^7.1.2",
+		"prettier": "^2.0.5",
+		"typescript": "^3.8.3",
+		"vscode-test": "^1.3.0"
+	}
 }
