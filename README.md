@@ -16,7 +16,8 @@ I think that's pretty nifty though.
 
 ## Known Issues
 
-- To be found out
+- Currently experincing a bug where the file must be "active" (open in an editor tab) for the context menu to work.
+- Does not support "multiple selections" nor committing a whole subfolder.
 
 ## Release Notes
 
