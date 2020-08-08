@@ -1,68 +1,9 @@
 import * as vscode from "vscode"
-import { outputChannel, runGit } from "../common"
+import { outputChannel, concat } from "../common"
+import { getAllFiles, sortFilesAndDirs } from "../files"
+import { runGit } from "../git"
 
 // TODO: Do stuff with outputChannel in case things go pearshaped.
-
-type FilesAndDirs = {
-  files: vscode.Uri[]
-  directories: vscode.Uri[]
-}
-
-const fs = vscode.workspace.fs
-
-const concat = (x: any[], y: any[]) => x.concat(y)
-
-const sortFilesAndDirs = async (
-  ...uris: vscode.Uri[]
-): Promise<FilesAndDirs> => {
-  const withStat = await Promise.all(
-    uris.map<Promise<[vscode.Uri, vscode.FileType]>>(async (uri) => [
-      uri,
-      (await fs.stat(uri)).type,
-    ]),
-  )
-
-  const filesAndDirs = withStat.reduce<FilesAndDirs>(
-    ({ files, directories }, [uri, type]) => {
-      switch (type) {
-        case vscode.FileType.File:
-          files.push(uri)
-          break
-        case vscode.FileType.Directory:
-          directories.push(uri)
-          break
-      }
-      return { files, directories }
-    },
-    { files: [], directories: [] },
-  )
-
-  return filesAndDirs
-}
-
-const getAllFiles = async (uri: vscode.Uri): Promise<vscode.Uri[]> => {
-  const allSubFilesRaw = await fs.readDirectory(uri)
-  const { files, directories } = allSubFilesRaw.reduce<FilesAndDirs>(
-    ({ files, directories }, [name, type]) => {
-      const newUri = uri.with({ path: `${uri.path}/${name}` })
-      switch (type) {
-        case vscode.FileType.File:
-          files.push(newUri)
-          break
-        case vscode.FileType.Directory:
-          directories.push(newUri)
-          break
-      }
-      return { files, directories }
-    },
-    { files: [], directories: [] },
-  )
-
-  const allFiles = await Promise.all(directories.map(getAllFiles))
-  allFiles.push(files)
-
-  return allFiles.reduce(concat, [])
-}
 
 // hoveredItem: Uri, allSelected: Uri[] =>
 // allSelected contains hoveredItem
