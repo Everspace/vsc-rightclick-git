@@ -39,7 +39,7 @@ export const stageChanges = vscode.commands.registerCommand(
 
     if (results.gitfailedProcesses.length > 0) {
       vscode.window.showErrorMessage(
-        "A git processes encoutered an error\nYou could be trying to add an ignored file.",
+        "A git processes encountered an error\nYou could be trying to add an ignored file.",
       )
     }
 
