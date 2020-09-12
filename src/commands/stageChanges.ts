@@ -1,12 +1,7 @@
 import * as vscode from "vscode"
-import { outputChannel, concat } from "../common"
+import { concat } from "../common"
 import { getAllFiles, sortFilesAndDirs } from "../files"
-import { runGit } from "../git"
-
-// TODO: Do stuff with outputChannel in case things go pearshaped.
-
-// hoveredItem: Uri, allSelected: Uri[] =>
-// allSelected contains hoveredItem
+import { runGit, displayGitResults } from "../git"
 
 export const stageChanges = vscode.commands.registerCommand(
   "rightclick-git.stageChanges",
@@ -18,31 +13,10 @@ export const stageChanges = vscode.commands.registerCommand(
     const fileList: vscode.Uri[] = allFiles.reduce(concat, [])
 
     const results = await runGit(["add"], fileList)
+    displayGitResults(results)
 
-    if (results.missingRepo.length > 0) {
-      vscode.window.showInformationMessage(
-        "Some items skipped due to not being in a git repository",
-      )
-    }
-
-    if (results.notOnThisEarth.length > 0) {
-      vscode.window.showInformationMessage(
-        "Some items skipped due to not being a local file",
-      )
-    }
-
-    if (results.outOfWorkspace.length > 0) {
-      vscode.window.showInformationMessage(
-        "Some items skipped due to not being in a workspace",
-      )
-    }
-
-    if (results.gitfailedProcesses.length > 0) {
-      vscode.window.showErrorMessage(
-        "A git processes encountered an error\nYou could be trying to add an ignored file.",
-      )
-    }
-
-    vscode.window.showInformationMessage("Staged files")
+    vscode.window.showInformationMessage(
+      `Rightclick Git: Staged ${results.affectedFiles.length} files`,
+    )
   },
 )

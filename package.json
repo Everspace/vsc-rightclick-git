@@ -21,8 +21,7 @@
 		"Rightclick"
 	],
 	"activationEvents": [
-		"workspaceContains:\\.gitignore",
-		"workspaceContains:\\.git/**"
+		"onStartupFinished"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -35,8 +34,25 @@
 				"when": "config.git.enabled && gitOpenRepositoryCount != 0"
 			},
 			{
-				"command": "whatever.helloWorld",
-				"title": "Hello World"
+				"command": "rightclick-git.commitChanges",
+				"category": "Rightclick Git",
+				"title": "Commit changes",
+				"group": "Git@1",
+				"when": "config.git.enabled && gitOpenRepositoryCount != 0"
+			},
+			{
+				"command": "rightclick-git.discardChanges",
+				"category": "Rightclick Git",
+				"title": "Discard changes",
+				"group": "Git@1",
+				"when": "config.git.enabled && gitOpenRepositoryCount != 0"
+			},
+			{
+				"command": "rightclick-git.unstageChanges",
+				"category": "Rightclick Git",
+				"title": "Unstage changes",
+				"group": "Git@1",
+				"when": "config.git.enabled && gitOpenRepositoryCount != 0"
 			}
 		],
 		"menus": {
@@ -47,18 +63,13 @@
 					"when": "config.git.enabled && gitOpenRepositoryCount != 0"
 				},
 				{
-					"command": "git.unstage",
+					"command": "rightclick-git.unstageChanges",
 					"group": "Git@2",
 					"when": "config.git.enabled && gitOpenRepositoryCount != 0"
 				},
 				{
-					"command": "git.clean",
+					"command": "rightclick-git.discardChanges",
 					"group": "Git@3",
-					"when": "config.git.enabled && gitOpenRepositoryCount != 0"
-				},
-				{
-					"command": "git.ignore",
-					"group": "Git@4",
 					"when": "config.git.enabled && gitOpenRepositoryCount != 0"
 				},
 				{
