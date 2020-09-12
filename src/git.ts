@@ -3,8 +3,17 @@ import { GitExtension } from "./types/git"
 import { ChildProcess } from "child_process"
 import { execProcess } from "./proc"
 
-export const getGit = () =>
-  vscode.extensions.getExtension<GitExtension>("vscode.git")?.exports?.getAPI(1)
+
+export const getGit = () => {
+  const git = vscode.extensions
+    .getExtension<GitExtension>("vscode.git")
+    ?.exports?.getAPI(1)
+  if (!git) {
+    vscode.window.showErrorMessage("Could not get git API")
+    throw new Error("missing git")
+  }
+  return git
+}
 
 type RunGitResults = {
   affectedFiles: vscode.Uri[]
@@ -37,9 +46,6 @@ export const runGit = async (
   files: vscode.Uri[],
 ): Promise<RunGitResults> => {
   const git = getGit()
-  if (!git) {
-    throw new Error("Could not get the git api")
-  }
 
   const info: RunGitResults = {
     missingRepo: [],
@@ -70,7 +76,7 @@ export const runGit = async (
     }
 
     // Could be ftp or some nonsense
-    if (workspaceOfFile.uri.scheme != "file") {
+    if (workspaceOfFile.uri.scheme !== "file") {
       info.notOnThisEarth.push(file)
       continue
     }
@@ -97,7 +103,7 @@ export const runGit = async (
     info.gitProcesses.push(...results.filter((p) => p.exitCode == 0))
     info.gitfailedProcesses.push(...results.filter((p) => p.exitCode != 0))
   } catch (error) {
-    if (typeof error == "object") {
+    if (typeof error === "object") {
       if (error?.pid) {
         info.gitfailedProcesses.push(error)
       } else {
