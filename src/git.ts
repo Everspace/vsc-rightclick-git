@@ -2,7 +2,28 @@ import * as vscode from "vscode"
 import { GitExtension } from "./types/git"
 import { ChildProcess } from "child_process"
 import { execProcess } from "./proc"
+import { outputChannel } from "./common"
 
+/**
+ * Sort items by which repo it is in.
+ * @param uris
+ * @returns Record<string, vscode.Uri>, "missingRepo" is one of the keys for all that are missing.
+ */
+export const bucketByRepository = (uris: vscode.Uri[]) => {
+  const git = getGit()
+  return uris.reduce<Record<string, vscode.Uri[]>>((mem, uri) => {
+    const repo = git.getRepository(uri)
+    if (repo === null) {
+      mem.missingRepo = mem?.missingRepo ?? []
+      mem.missingRepo.push(uri)
+      return mem
+    }
+    let path = repo.rootUri.toString()
+    mem[path] = mem[path] ?? []
+    mem[path].push(uri)
+    return mem
+  }, {})
+}
 
 export const getGit = () => {
   const git = vscode.extensions
@@ -17,6 +38,10 @@ export const getGit = () => {
 
 type RunGitResults = {
   affectedFiles: vscode.Uri[]
+  /**
+   * Files that are a part of a "filed" run of git.
+   */
+  failedFiles: vscode.Uri[]
   missingRepo: vscode.Uri[]
   outOfWorkspace: vscode.Uri[]
   /**
@@ -52,6 +77,7 @@ export const runGit = async (
     outOfWorkspace: [],
     notOnThisEarth: [],
     affectedFiles: [],
+    failedFiles: [],
     gitProcesses: [],
     gitfailedProcesses: [],
   }
@@ -82,26 +108,39 @@ export const runGit = async (
     }
 
     const repoRoot = repoOfFile.rootUri.fsPath
-    if (!batches[repoRoot]) {
-      batches[repoRoot] = []
-    }
+    batches[repoRoot] = batches[repoRoot] ?? []
     batches[repoRoot].push(file)
   }
 
   const cmd: string[] = [`"${git.git.path}"`, ...commands]
 
   try {
-    const results = await Promise.all(
-      Object.entries(batches).map(([cwd, toMutate]) =>
-        execProcess([...cmd, ...toMutate.map((file) => `"${file.fsPath}"`)], {
-          cwd,
-          windowsHide: true,
-          env: process.env,
-        }),
-      ),
+    type Batch = { process: Promise<ChildProcess>; files: vscode.Uri[] }
+    const processes: Batch[] = Object.entries(batches).map(
+      ([cwd, toMutate]) => ({
+        process: execProcess(
+          [...cmd, ...toMutate.map((file) => `"${file.fsPath}"`)],
+          {
+            cwd,
+            windowsHide: true,
+            env: process.env,
+          },
+        ),
+        files: toMutate,
+      }),
     )
-    info.gitProcesses.push(...results.filter((p) => p.exitCode == 0))
-    info.gitfailedProcesses.push(...results.filter((p) => p.exitCode != 0))
+
+    for (const batch of processes) {
+      // This could be more parallel? But like, lets not.
+      const process = await batch.process
+      if (process.exitCode === 0) {
+        info.gitProcesses.push(process)
+        info.affectedFiles = info.affectedFiles.concat(batch.files)
+      } else {
+        info.gitfailedProcesses.push(process)
+        info.failedFiles.concat(batch.files)
+      }
+    }
   } catch (error) {
     if (typeof error === "object") {
       if (error?.pid) {
@@ -114,4 +153,49 @@ export const runGit = async (
     }
   }
   return info
+}
+
+export const displayGitResults = (results: RunGitResults): boolean => {
+  if (results.missingRepo.length > 0) {
+    vscode.window.showInformationMessage(
+      "Rightclick Git: Some items skipped due to not being in a git repository",
+    )
+    return false
+  }
+
+  if (results.notOnThisEarth.length > 0) {
+    vscode.window.showInformationMessage(
+      "Rightclick Git: Some items skipped due to not being a local file",
+    )
+    return false
+  }
+
+  if (results.outOfWorkspace.length > 0) {
+    vscode.window.showInformationMessage(
+      "Rightclick Git: Some items skipped due to not being in a workspace",
+    )
+    return false
+  }
+
+  if (results.gitfailedProcesses.length > 0) {
+    vscode.window.showErrorMessage(
+      "Rightclick Git: A git processes encountered an error\nYou could be trying to add an ignored file.",
+    )
+    return false
+  }
+
+  if (results.failedFiles.length > 0) {
+    vscode.window.showErrorMessage(
+      `Rightclick Git: A git processes failed on ${results.failedFiles.length}, a list is in console`,
+    )
+    outputChannel.appendLine("A git process failed on the following files:")
+    outputChannel.appendLine(
+      results.failedFiles.map((f) => `\t${f.fsPath}`).join("\n"),
+    )
+    outputChannel.show()
+
+    return false
+  }
+
+  return true
 }
