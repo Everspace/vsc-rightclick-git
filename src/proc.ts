@@ -11,14 +11,14 @@ export const execProcess = async (
       reject(p)
     })
     p.addListener("exit", (code) => {
-      if (code == 0) {
+      if (code === 0) {
         resolve(p)
       } else {
         reject(p)
       }
     })
     p.addListener("close", (code) => {
-      if (code == 0) {
+      if (code === 0) {
         resolve(p)
       } else {
         reject(p)
