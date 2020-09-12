@@ -5,6 +5,7 @@ test/**
 jsconfig.json
 vsc-extension-quickstart.md
 .eslintrc.json
+.github
 
 out/test/**
 src/**
