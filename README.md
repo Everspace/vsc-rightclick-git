@@ -12,14 +12,19 @@ I think that's pretty nifty though.
 
 ## Requirements
 
-* Git
+- Git
 
 ## Known Issues
 
-- Currently experincing a bug where the file must be "active" (open in an editor tab) for the context menu to work.
-- Does not support "multiple selections" nor committing a whole subfolder.
+- Probably does not really handle some of the more esoteric
+  setups involving things like git within git, remote git, or multiple folders although I tried.
 
 ## Release Notes
+
+### 2.0.0
+
+- Add ability to multi-select to stage.
+- Add ability to select a directory and stage everything within it.
 
 ### 1.0.0
 
