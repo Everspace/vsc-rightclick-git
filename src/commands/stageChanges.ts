@@ -5,8 +5,11 @@ import { runGit, displayGitResults } from "../git"
 
 export const stageChanges = vscode.commands.registerCommand(
   "rightclick-git.stageChanges",
-  async (_, allSelected: vscode.Uri[]) => {
-    const { files, directories } = await sortFilesAndDirs(...allSelected)
+  async (file: vscode.Uri, allSelected: vscode.Uri[] | { groupId: number }) => {
+    // clicking on editor title context menu returns an object as the second arg
+    const { files, directories } = Array.isArray(allSelected)
+      ? await sortFilesAndDirs(...allSelected)
+      : { files: [file], directories: [] }
 
     const allFiles = await Promise.all(directories.map(getAllFiles))
     allFiles.push(files)
@@ -15,8 +18,9 @@ export const stageChanges = vscode.commands.registerCommand(
     const results = await runGit(["add"], fileList)
     displayGitResults(results)
 
+    const count = results.affectedFiles.length;
     vscode.window.showInformationMessage(
-      `Rightclick Git: Staged ${results.affectedFiles.length} files`,
+      `Rightclick Git: Staged ${count} file` + (count !== 1 ? 's' : ''),
     )
   },
 )
