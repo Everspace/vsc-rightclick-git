@@ -10,6 +10,8 @@ It does this and not much else:
 
 I think that's pretty nifty though.
 
+You can also find those options on the context menu of the editor title by right clicking the file tab.
+
 ## Requirements
 
 - Git
@@ -21,11 +23,8 @@ I think that's pretty nifty though.
 
 ## Release Notes
 
-### 2.0.0
+See the [Changelog file](CHANGELOG.md).
 
-- Add ability to multi-select to stage.
-- Add ability to select a directory and stage everything within it.
+## License
 
-### 1.0.0
-
-Initial release
+See the [License file](LICENSE).

@@ -29,33 +29,39 @@
 			{
 				"command": "rightclick-git.stageChanges",
 				"category": "Rightclick Git",
-				"title": "Stage changes",
-				"group": "Git@1",
-				"when": "config.git.enabled && gitOpenRepositoryCount != 0"
+				"title": "Stage changes"
 			},
 			{
 				"command": "rightclick-git.commitChanges",
 				"category": "Rightclick Git",
-				"title": "Commit changes",
-				"group": "Git@1",
-				"when": "config.git.enabled && gitOpenRepositoryCount != 0"
+				"title": "Commit changes"
 			},
 			{
 				"command": "rightclick-git.discardChanges",
 				"category": "Rightclick Git",
-				"title": "Discard changes",
-				"group": "Git@1",
-				"when": "config.git.enabled && gitOpenRepositoryCount != 0"
+				"title": "Discard changes"
 			},
 			{
 				"command": "rightclick-git.unstageChanges",
 				"category": "Rightclick Git",
-				"title": "Unstage changes",
-				"group": "Git@1",
-				"when": "config.git.enabled && gitOpenRepositoryCount != 0"
+				"title": "Unstage changes"
 			}
 		],
 		"menus": {
+			"commandPalette": [
+				{
+					"command": "rightclick-git.stageChanges",
+					"when": "false"
+				},
+				{
+					"command": "rightclick-git.unstageChanges",
+					"when": "false"
+				},
+				{
+					"command": "rightclick-git.discardChanges",
+					"when": "false"
+				}
+			],
 			"explorer/context": [
 				{
 					"command": "rightclick-git.stageChanges",
@@ -75,6 +81,23 @@
 				{
 					"command": "git.commitStaged",
 					"group": "Git@5",
+					"when": "config.git.enabled && gitOpenRepositoryCount != 0"
+				}
+			],
+			"editor/title/context": [
+				{
+					"command": "rightclick-git.stageChanges",
+					"group": "Git@1",
+					"when": "config.git.enabled && gitOpenRepositoryCount != 0"
+				},
+				{
+					"command": "rightclick-git.unstageChanges",
+					"group": "Git@2",
+					"when": "config.git.enabled && gitOpenRepositoryCount != 0"
+				},
+				{
+					"command": "rightclick-git.discardChanges",
+					"group": "Git@3",
 					"when": "config.git.enabled && gitOpenRepositoryCount != 0"
 				}
 			]
