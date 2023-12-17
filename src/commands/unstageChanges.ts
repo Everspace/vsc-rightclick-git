@@ -20,7 +20,7 @@ export const unstageChanges = vscode.commands.registerCommand(
 
     const count = results.affectedFiles.length;
     vscode.window.showInformationMessage(
-      `Rightclick Git: Unstaged ${count} file` + (count > 1 ? 's' : ''),
+      `Rightclick Git: Unstaged ${count} file` + (count !== 1 ? 's' : ''),
     )
   },
 )

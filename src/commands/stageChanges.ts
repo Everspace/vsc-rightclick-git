@@ -20,7 +20,7 @@ export const stageChanges = vscode.commands.registerCommand(
 
     const count = results.affectedFiles.length;
     vscode.window.showInformationMessage(
-      `Rightclick Git: Staged ${count} file` + (count > 1 ? 's' : ''),
+      `Rightclick Git: Staged ${count} file` + (count !== 1 ? 's' : ''),
     )
   },
 )
